@@ -1,4 +1,6 @@
-# weelnk
+# Weelnk
+
+![Screenshot](http://imgur.com/UlxBJ5A)
 
 ## Install
 
@@ -17,3 +19,7 @@ In production you should set real environment variables for the process.  The .e
 ### Migrations
 
 `php cli migrate`
+
+## License
+
+Weelnk is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
