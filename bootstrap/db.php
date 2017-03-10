@@ -1,9 +1,9 @@
 <?php
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 return function ($c) {
-    // $manager = $c->get('capsule');
-    // return $manager->getConnection();
-    $capsule = new \Illuminate\Database\Capsule\Manager;
+    $capsule = new Capsule();
     $capsule->addConnection([
         'driver'    => getenv('DB_TYPE') ?: 'mysql',
         'host'      => getenv('DB_HOST') ?: '127.0.0.1',
@@ -16,7 +16,5 @@ return function ($c) {
     ]);
 
     $capsule->setAsGlobal();
-    //$capsule->bootEloquent();
-
     return $capsule;
 };

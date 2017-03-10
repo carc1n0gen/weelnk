@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Redis\RedisManager;
+
 return function ($c) {
-    return new Illuminate\Redis\RedisManager(
+    return new RedisManager(
         'predis',
         [
             'default' => [

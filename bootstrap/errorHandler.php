@@ -1,5 +1,7 @@
 <?php
 
+use App\Handlers;
+
 return function ($c) {
-    return new App\Handlers\ErrorHandler($c);
+    return new Handlers\ErrorHandler($c);
 };
