@@ -2,6 +2,9 @@
 
 use \Phpmig\Adapter;
 
+$app = require __DIR__.'/bootstrap/app.php';
+$app->getContainer()->get('db');
+
 $container = new ArrayObject();
 
 // TODO: replace this with a better Phpmig\Adapter\AdapterInterface

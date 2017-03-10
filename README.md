@@ -14,11 +14,11 @@ For development it's good enough to just copy the example .env file and modify i
 
 `cp .env.example .env`
 
-In production you should set real environment variables for the process.  The .env.example contains the required variables.
+In production you should set real environment variables for the process.  The `.env.example` contains the required variables.
 
 ### Migrations
 
-`php cli migrate`
+`php vendor/bin/phpmig migrate`
 
 ## License
 
