@@ -1,6 +1,6 @@
 # Weelnk
 
-![Screenshot](http://imgur.com/UlxBJ5A)
+![Screenshot](http://i.imgur.com/UlxBJ5A.png)
 
 ## Install
 
