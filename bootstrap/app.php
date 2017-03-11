@@ -3,6 +3,7 @@
 $config = [
     'settings' => [
         'displayErrorDetails' => getenv('APP_DEBUG') ?: false,
+        'database' => require __DIR__.'/../config/database.php',
     ],
 ];
 
