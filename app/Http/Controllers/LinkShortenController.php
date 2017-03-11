@@ -35,7 +35,7 @@ class LinkShortenController extends Controller
         
         $link = $this->db->table('links')->where('md5', $md5)->first();
         if ($link) {
-            $id = $link[0]->id;
+            $id = $link->id;
         } else {
             $id = $this->db->table('links')->insertGetId(
                 ['url' => $url, 'md5' => $md5]
