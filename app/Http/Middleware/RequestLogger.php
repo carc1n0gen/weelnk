@@ -15,6 +15,7 @@ class RequestLogger extends Middleware
             'ip' => $request->getRemoteAddress(),
             'path' => $request->getPath(),
             'queryParms' => $request->getQueryParams(),
+            'headers' => $request->getHeaders(),
         ]);
         return $next($request, $response);
     }
