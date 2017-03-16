@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use Exception;
 use Carbon\Carbon;
 
@@ -20,7 +21,7 @@ class LinkFetchController extends Controller
             $link = $this->db->table('links')->find($id);
 
             if ($link) {
-                $this->cache->put($args['shortLink'], $link->url, Carbon::now()->addDay());
+                $this->cache->put($args['shortLink'], $link->url, new DateTime('+24 hours'));
                 $data = ['code' => 'ok', 'url' => $link->url];
                 $response = $request->isJson() ? $response->withJson($data) : $response->redirect($link->url);
             } else {
