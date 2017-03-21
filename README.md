@@ -18,7 +18,7 @@ In production you should set real environment variables for the process.  The `.
 
 ### Migrations
 
-`php vendor/bin/phpmig migrate`
+`php cli migrate`
 
 ## License
 
