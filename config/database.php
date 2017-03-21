@@ -6,7 +6,7 @@ return [
 
         'driver' => 'sqlite',
 
-        'database' => __DIR__.'/../storage/database/weelnk.sqlite',
+        'database' => getenv('DB_DATABASE') ? __DIR__.'/../storage/database/'.getenv('DB_DATABASE')  : __DIR__.'/../storage/database/weelnk.sqlite',
 
         'prefix' => getenv('DB_PREFIX') ?: '',
     ],

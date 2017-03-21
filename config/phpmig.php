@@ -1,17 +1,11 @@
 <?php
 
-use \Phpmig\Adapter;
-
-$app = require __DIR__.'/bootstrap/app.php';
-$app->getContainer()->get('db');
+$app = require __DIR__.'/../bootstrap/app.php';
+$capsule = $app->getContainer()->get('db');
 
 $container = new ArrayObject();
-
-// TODO: replace this with a better Phpmig\Adapter\AdapterInterface
-$container['phpmig.adapter'] = new Adapter\File\Flat(__DIR__ . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations/.migrations.log');
-
-$container['phpmig.migrations_path'] = __DIR__ . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations';
-
-$container['phpmig.migrations_template_path'] = $container['phpmig.migrations_path'] . DIRECTORY_SEPARATOR . '.template.php';
+$container['phpmig.adapter'] = new \Phpmig\Adapter\Illuminate\Database($capsule, 'migrations');
+$container['phpmig.migrations_path'] = __DIR__.'/../migrations';
+$container['phpmig.migrations_template_path'] = __DIR__.'/../migrations/.template.php';
 
 return $container;

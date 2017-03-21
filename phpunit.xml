@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit colors="true"
+         bootstrap="./tests/bootstrap.php"
+         stopOnFailure="false"
+         verbose="true"
+         syntaxCheck="true"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         processIsolation="false">
+    
+    <testsuites>
+        <testsuite name="Unit Tests">
+            <directory>./tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>./app</directory>
+        </whitelist>
+    </filter>
+
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="CACHE_DRIVER" value="array"/>
+        <env name="DB_TYPE" value="sqlite"/>
+        <env name="DB_DATABASE" value="weelnk-test.sqlite"/>
+    </php>
+
+</phpunit>
