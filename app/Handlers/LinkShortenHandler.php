@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Handlers;
 
+use App\Component;
 use App\Errors\ValidationException;
 
 /**
  *  Shorten a url and present the generated shortlink
  */
-class LinkShortenController extends Controller
+class LinkShortenHandler extends Component
 {
     const PATTERN = '((https?:\/\/)?(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})';
 

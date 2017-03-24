@@ -118,7 +118,7 @@ footer {
 
 		<?php if (isset($link)): ?>
 		<div class="link">
-			<a href="<?= $link ?>"><?= $link ?></a>
+			<a id="short-link" href="<?= $link ?>"><?= $link ?></a>
 		</div>
 		<?php endif ?>
 	

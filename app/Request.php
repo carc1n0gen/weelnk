@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http;
+namespace App;
 
 use Slim\Http\Request as SlimRequest;
 

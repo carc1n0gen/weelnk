@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Handlers;
+namespace App;
 
 use Interop\Container\ContainerInterface;
 
 /**
- * A base handler with properties to be inherited by all handlers.
+ * A base component with properties to be inherited by all components.
  */
-class Handler
+class Component
 {
     protected $container;
 

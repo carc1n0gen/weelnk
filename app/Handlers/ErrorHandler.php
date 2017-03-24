@@ -2,6 +2,7 @@
 
 namespace App\Handlers;
 
+use App\Component;
 use App\Errors\ValidationException;
 use Carc1n0gen\ShortLink\Errors\DecodingException;
 
@@ -10,7 +11,7 @@ use Carc1n0gen\ShortLink\Errors\DecodingException;
  *
  * This handler responds as json or web page depending on the request type
  */
-class ErrorHandler extends Handler
+class ErrorHandler extends Component
 {
     public function __invoke($request, $response, $exception)
     {

@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Middleware;
 
+use App\Component;
 use Interop\Container\ContainerInterface;
 
 /**
  * This middleware logs request information for each request
  */
-class RequestLogger extends Middleware
+class RequestLogger extends Component
 {
     public function __invoke($request, $response, $next)
     {

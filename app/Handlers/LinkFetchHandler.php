@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Handlers;
 
 use DateTime;
 use Exception;
-use Carbon\Carbon;
+use App\Component;
 
 /**
  * Fech the url for a given shortlink
  */
-class LinkFetchController extends Controller
+class LinkFetchHandler extends Component
 {
     public function __invoke($request, $response, $args)
     {

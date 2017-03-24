@@ -24,12 +24,12 @@ $app = new Slim\App($config);
 $container = $app->getContainer();
 
 $container['request'] = function ($c) {
-    return App\Http\Request::createFromEnvironment($c->get('environment'));
+    return App\Request::createFromEnvironment($c->get('environment'));
 };
 
 $container['response'] = function ($c) {
     $headers = new Slim\Http\Headers(['Content-Type' => 'text/html; charset=UTF-8']);
-    $response = new App\Http\Response(200, $headers);
+    $response = new App\Response(200, $headers);
     return $response->withProtocolVersion($c->get('settings')['httpVersion']);
 };
 
@@ -110,7 +110,7 @@ $container['fileSystem'] = function ($c) {
     return new Illuminate\Filesystem\Filesystem();
 };
 
-$app->add(App\Http\Middleware\RequestLogger::class);
+$app->add(App\Middleware\RequestLogger::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -122,8 +122,8 @@ $app->get('/', function ($request, $response) {
     return $this->view->render($response, 'form.php');
 });
 
-$app->get('/{shortLink}', App\Http\Controllers\LinkFetchController::class);
+$app->get('/{shortLink}', App\Handlers\LinkFetchHandler::class);
 
-$app->post('/', App\Http\Controllers\LinkShortenController::class);
+$app->post('/', App\Handlers\LinkShortenHandler::class);
 
 return $app;
