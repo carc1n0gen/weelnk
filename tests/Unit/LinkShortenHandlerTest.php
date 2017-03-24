@@ -5,12 +5,12 @@ namespace Tests\Unit;
 use Slim\Http\Uri;
 use Slim\Http\Body;
 use Tests\TestCase;
-use App\Http\Request;
+use App\Request;
 use Slim\Http\Headers;
 use App\Errors\ValidationException;
-use App\Http\Controllers\LinkShortenController;
+use App\Handlers\LinkShortenHandler;
 
-class LinkShortenControllerTest extends TestCase
+class LinkShortenHandlerTest extends TestCase
 {
     protected $app;
     protected $controller;
@@ -18,7 +18,7 @@ class LinkShortenControllerTest extends TestCase
     public function setUp()
     {
         $this->app = $this->createApplication();
-        $this->controller = new LinkShortenController($this->app->getContainer());
+        $this->controller = new LinkShortenHandler($this->app->getContainer());
     }
 
     public function testShouldThrowValidationExceptionWithKnowParameter()
@@ -57,7 +57,7 @@ class LinkShortenControllerTest extends TestCase
         $controller = $this->controller;
         $response = $controller($req, $res);
 
-        $this->assertEquals($response->getStatusCode(), 200);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     /**

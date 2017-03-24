@@ -5,7 +5,7 @@ namespace Test\Unit;
 use Mockery;
 use Monolog\Logger;
 use Tests\TestCase;
-use App\Http\Middleware\RequestLogger;
+use App\Middleware\RequestLogger;
 
 class RequestLoggerTest extends TestCase
 {
@@ -29,7 +29,5 @@ class RequestLoggerTest extends TestCase
         $response = $middleware($req, $res, function ($req, $res) {
             return $res;
         });
-
-        Mockery::close();
     }
 }

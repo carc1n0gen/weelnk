@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
+use App\Request;
 use Slim\Http\Uri;
 use Slim\Http\Body;
 use Tests\TestCase;
-use App\Http\Request;
 use Slim\Http\Headers;
 use Slim\Http\Environment;
 
@@ -45,7 +45,7 @@ class RequestTest extends TestCase
         $headers->set('Content-type', 'application/x-www-form-urlencoded');
         $req = new Request('POST', new Uri('http', 'test.com', null, '/this/path'), $headers, [], ['REMOTE_ADDR' => '127.0.0.1'], new Body(fopen("data://text/plain,$body", 'r')), []);
 
-        $this->assertEquals($req->getRemoteAddress(), '127.0.0.1');
+        $this->assertEquals('127.0.0.1', $req->getRemoteAddress());
     }
 
     public function testGetRemoteAddressNull()

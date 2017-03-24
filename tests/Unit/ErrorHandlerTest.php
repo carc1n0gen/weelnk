@@ -25,7 +25,7 @@ class ErrorHandlerTest extends TestCase
         $handler = new ErrorHandler(self::$app->getContainer());
 
         $response = $handler($req, $res, $exception);
-        $this->assertEquals($response->getStatusCode(), 400);
+        $this->assertEquals(400, $response->getStatusCode());
     }
 
     public function testShouldRespondNotFound()
@@ -36,7 +36,7 @@ class ErrorHandlerTest extends TestCase
         $handler = new ErrorHandler(self::$app->getContainer());
 
         $response = $handler($req, $res, $exception);
-        $this->assertEquals($response->getStatusCode(), 404);
+        $this->assertEquals(404, $response->getStatusCode());
     }
 
     public function testShouldRespondUnknownError()
@@ -47,6 +47,6 @@ class ErrorHandlerTest extends TestCase
         $handler = new ErrorHandler(self::$app->getContainer());
 
         $response = $handler($req, $res, $exception);
-        $this->assertEquals($response->getStatusCode(), 500);
+        $this->assertEquals(500, $response->getStatusCode());
     }
 }

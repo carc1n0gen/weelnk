@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
+use App\Request;
 use Slim\Http\Uri;
 use Slim\Http\Body;
 use Tests\TestCase;
-use App\Http\Request;
 use Slim\Http\Headers;
 use Slim\Http\Environment;
 
@@ -24,7 +24,7 @@ class ResponseTest extends TestCase
         $response = $response->redirect('https://google.ca');
         $headers = $response->getHeaders();
 
-        $this->assertEquals($response->getStatusCode(), 302);
-        $this->assertEquals($headers['Location'][0], 'https://google.ca');
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals('https://google.ca', $headers['Location'][0]);
     }
 }
