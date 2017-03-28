@@ -20,6 +20,14 @@ In production you should set real environment variables for the process.  The `.
 
 `php cli migrate`
 
+### Permissions
+
+The `storage` directory will need write permissions for the web server.
+
+**Ubuntu/Debian**: `sudo chown -R www-data:www-data storage`
+
+**FreeBSD**: `sudo chown -R www:www storage`
+
 ## License
 
 Weelnk is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
