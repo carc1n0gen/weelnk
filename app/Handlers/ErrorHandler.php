@@ -29,7 +29,7 @@ class ErrorHandler extends Component
                 $response = $request->isJson() ? $response->withJson($data) : $this->view->render($response, 'form.php', $data);
                 break;
 
-            default;
+            default:
                 $this->logger->addError('Unknown error', ['exception' => $exception]);
                 $status = 500;
                 $data = ['code' => 'unknownError', 'msg' => 'An unknow nerror occurred'];
