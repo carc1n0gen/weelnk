@@ -127,6 +127,7 @@ footer {
 
 <footer>
     <p>&copy; Carson Evans <?= date('Y') ?></p>
+    <p>Check out the code <a href="https://github.com/carc1n0gen/weelnk">on github</a></p>
 </footer>
 
 <script>
