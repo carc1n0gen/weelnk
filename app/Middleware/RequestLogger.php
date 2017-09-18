@@ -3,7 +3,6 @@
 namespace App\Middleware;
 
 use App\Component;
-use Interop\Container\ContainerInterface;
 
 /**
  * This middleware logs request information for each request

@@ -10,8 +10,8 @@ try {
     //
 }
 
-use Phpmig\Console\Command as PhpmigCommand;
 use Symfony\Component\Console\Application;
+use Phpmig\Console\Command as PhpmigCommand;
 
 $app = new Application();
 

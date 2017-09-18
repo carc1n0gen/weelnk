@@ -1,7 +1,7 @@
 <?php
 
 use Phpmig\Migration\Migration;
-use Illuminate\Database\Capsule\Manager as Capsule;
+//use Illuminate\Database\Capsule\Manager as Capsule;
 
 class CreateLinksTable extends Migration
 {
@@ -10,12 +10,12 @@ class CreateLinksTable extends Migration
      */
     public function up()
     {
-        Capsule::schema()->create('links', function($table)
-        {
-            $table->increments('id');
-            $table->string('md5', 32);
-            $table->string('url', 2000);
-        });
+        // Capsule::schema()->create('links', function($table)
+        // {
+        //     $table->increments('id');
+        //     $table->string('md5', 32);
+        //     $table->string('url', 2000);
+        // });
 
     }
 
@@ -24,6 +24,6 @@ class CreateLinksTable extends Migration
      */
     public function down()
     {
-        Capsule::schema()->drop('links');
+        // Capsule::schema()->drop('links');
     }
 }
