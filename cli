@@ -11,20 +11,30 @@ try {
 }
 
 use Symfony\Component\Console\Application;
-use Phpmig\Console\Command as PhpmigCommand;
+use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
+use Doctrine\DBAL\Migrations\Tools\Console\Command as DoctrineCommand;
 
-$app = new Application();
+$app = require __DIR__ . '/bootstrap/app.php';
+$db = $app->getContainer()->get('db');
 
-$app->addCommands([
-    new PhpmigCommand\CheckCommand,
-    new PhpmigCommand\DownCommand,
-    new PhpmigCommand\GenerateCommand,
-    new PhpmigCommand\InitCommand,
-    new PhpmigCommand\MigrateCommand,
-    new PhpmigCommand\RedoCommand,
-    new PhpmigCommand\RollbackCommand,
-    new PhpmigCommand\StatusCommand,
-    new PhpmigCommand\UpCommand,
+$helperSet = new HelperSet([
+    'db' => new ConnectionHelper($db),
+    'dialog' => new QuestionHelper(),
 ]);
 
-$app->run();
+$cli = new Application();
+
+$cli->setHelperSet($helperSet);
+
+$cli->addCommands([
+    new DoctrineCommand\DiffCommand(),
+    new DoctrineCommand\ExecuteCommand(),
+    new DoctrineCommand\GenerateCommand(),
+    new DoctrineCommand\MigrateCommand(),
+    new DoctrineCommand\StatusCommand(),
+    new DoctrineCommand\VersionCommand(),
+]);
+
+$cli->run();

@@ -32,5 +32,18 @@ class LinkFetchHandler extends Component
         // }
 
         // return $response;
+
+        $url = $this->LinkStore->find($args['shortLink']);
+        if ($url) {
+            $data = ['code' => 'ok', 'url' => $url];
+            $response = $request->isJson() ? $response->withJson($data)
+                : $response->redirect($url);
+        } else {
+            $data = ['code' => 'notFound', 'msg' => 'No link found'];
+            $response = $request->isJson() ? $response->withJson($data, 404)
+                : $this->view->render($response, 'form.php', $data)->withStatus(404);
+        }
+
+        return $response;
     }
 }

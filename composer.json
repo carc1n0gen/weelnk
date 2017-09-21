@@ -11,15 +11,11 @@
     ],
     "require": {
         "carc1n0gen/short-link": "^1.1",
-        "davedevelopment/phpmig": "dev-master#e24b303936931c9b912f13ad0a3ea8351efa8f00",
-        "illuminate/cache": "^5.4",
-        "illuminate/database": "^5.4",
-        "illuminate/filesystem": "^5.4",
-        "illuminate/redis": "^5.4",
         "monolog/monolog": "^1.22",
         "slim/php-view": "^2.2",
         "slim/slim": "^3.7",
-        "vlucas/phpdotenv": "^2.4"
+        "vlucas/phpdotenv": "^2.4",
+        "doctrine/migrations": "^1.5"
     },
     "autoload": {
         "psr-4": {
@@ -32,7 +28,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Migrations\\": "migrations/"
         }
     }
 }

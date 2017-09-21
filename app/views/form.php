@@ -25,9 +25,12 @@ h1 {
     margin: 0 0 1em;
 }
 
+header a {
+	text-decoration: none;
+}
+
 a {
 	color: #93A1A1;
-	text-decoration: none;
 }
 
 .url:focus,
@@ -105,9 +108,7 @@ footer {
 	<div id="frm">
 	
 		<?php if (isset($msg)): ?>
-		<div class="error">
-			<?= $msg ?>
-		</div>
+			<div class="error"><?= $msg ?></div>
 		<?php endif ?>
 	
 		<form class="form" action="/" method="post">
@@ -117,9 +118,9 @@ footer {
 		</form>
 
 		<?php if (isset($link)): ?>
-		<div class="link">
-			<a id="short-link" href="<?= $link ?>"><?= $link ?></a>
-		</div>
+			<div class="link">
+				<a id="short-link" href="<?= $link ?>"><?= $link ?></a>
+			</div>
 		<?php endif ?>
 	
 	</div>
@@ -127,7 +128,7 @@ footer {
 
 <footer>
     <p>&copy; Carson Evans <?= date('Y') ?></p>
-    <p>Check out the code <a href="https://github.com/carc1n0gen/weelnk">on github</a></p>
+    <p>Check out the code on <a href="https://github.com/carc1n0gen/weelnk">github</a></p>
 </footer>
 
 <script>

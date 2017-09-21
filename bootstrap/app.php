@@ -9,7 +9,6 @@
 $config = [
     'settings' => [
         'displayErrorDetails' => getenv('APP_DEBUG') ?: false,
-        'database' => require __DIR__.'/../config/database.php',
     ],
 ];
 
@@ -37,34 +36,34 @@ $container['errorHandler'] = function ($c) {
     return new App\Handlers\ErrorHandler($c);
 };
 
-// $container['db'] = function ($c) {
-//     $config = $c->get('settings')['database'];
-//     $dbType = getenv('DB_TYPE') ?: 'mysql';
-
-//     $capsule = new Illuminate\Database\Capsule\Manager();
-//     $capsule->addConnection($config[$dbType]);
-//     $capsule->setAsGlobal();
-    
-//     return $capsule;
-// };
-
 $container['db'] = function ($c) {
     $drivers = [
-        'sqlite': 'pdo_sqlite',
-        'mysql': 'pdo_mysql',
-        'pgsql': 'pdo_pgsql',
+        'sqlite' => 'pdo_sqlite',
+        'mysql' => 'pdo_mysql',
+        'pgsql' => 'pdo_pgsql',
     ];
+    $ports = [
+        'mysql' => 3306,
+        'pgsql' => 5432,
+    ];
+
     $config = new \Doctrine\DBAL\Configuration();
 
+    $type = getenv('DB_TYPE') ?: 'mysql';
     $connectionParams = array(
         'dbname' => getenv('DB_DATABASE') ?: 'weelnk',
         'user' => getenv('DB_USERNAME') ?: 'root',
         'password' => getenv('DB_PASSWORD') ?: '',
         'host' => getenv('DB_HOST') ?: '127.0.0.1',
-        'driver' => $drivers[getenv('DB_TYPE') ?: 'mysql'],
+        'port' => getenv('DB_PORT') ?: $ports[$type],
+        'driver' => $drivers[$type],
     );
 
     return \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+};
+
+$container['LinkStore'] = function ($c) {
+    return new App\Stores\LinkStore($c);
 };
 
 $container['view'] = function ($c) {
