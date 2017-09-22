@@ -6,11 +6,18 @@ use App\Component;
 
 class LinkStore extends Component
 {
+    /**
+     * Find a full url from it's shortLink
+     *
+     * @param string $shortLink The encoded shortlink
+     * @return string The url if found
+     * @return null if not found 
+     */
     public function find($shortLink)
     {
         // TODO: Check in cache first
 
-        $id = $this->shortlink->decode($args['shortLink']);
+        $id = $this->shortlink->decode($shortLink);
         $link = $this->db->createQueryBuilder()
             ->select('*')
             ->from('links')
@@ -35,6 +42,8 @@ class LinkStore extends Component
      */
     public function findOrCreate($url)
     {
+        // TODO: I could probably utilize cache based on the md5
+
         // If the url does not include the protocol, assume http
         if (!preg_match('#^(.*:)?//#i', $url)) {
             $url = "http://$url";
