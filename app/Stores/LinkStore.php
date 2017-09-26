@@ -2,10 +2,24 @@
 
 namespace App\Stores;
 
-use App\Component;
+use Doctrine\DBAL\Connection;
+use Carc1n0gen\ShortLink\Converter;
+use Cache\Adapter\Common\CacheItem;
+use Cache\Adapter\Common\AbstractCachePool;
 
-class LinkStore extends Component
+class LinkStore
 {
+    protected $shortlink;
+    protected $db;
+    protected $cache;
+
+    public function __construct(Converter $shortlink, Connection $db, AbstractCachePool $cache)
+    {
+        $this->shortlink = $shortlink;
+        $this->db = $db;
+        $this->cache = $cache;
+    }
+
     /**
      * Find a full url from it's shortLink
      *
@@ -15,7 +29,9 @@ class LinkStore extends Component
      */
     public function find($shortLink)
     {
-        // TODO: Check in cache first
+        if ($url = $this->cache->getItem($shortLink)->get()) {
+            return $url;
+        }
 
         $id = $this->shortlink->decode($shortLink);
         $link = $this->db->createQueryBuilder()
@@ -27,6 +43,7 @@ class LinkStore extends Component
             ->fetch();
 
         if ($link) {
+            $this->cache->save(new CacheItem($shortLink, true, $link['url']));
             return $link['url'];
         }
 
@@ -42,14 +59,15 @@ class LinkStore extends Component
      */
     public function findOrCreate($url)
     {
-        // TODO: I could probably utilize cache based on the md5
-
         // If the url does not include the protocol, assume http
         if (!preg_match('#^(.*:)?//#i', $url)) {
             $url = "http://$url";
         }
 
         $md5 = md5($url);
+        if ($shortLink = $this->cache->getItem($md5)->get()) {
+            return $shortLink;
+        }
 
         $link = $this->db->createQueryBuilder()
             ->select('*')
@@ -60,10 +78,13 @@ class LinkStore extends Component
             ->fetch();
 
         if ($link) {
-            return $this->shortlink->encode($link['id']);
+            $shortLink = $this->shortlink->encode($link['id']);
+        } else {
+            $shortLink = $this->create($url, $md5);
         }
 
-        return $this->create($url, $md5);
+        $this->cache->save(new CacheItem($md5, true, $shortLink));
+        return $shortLink;
     }
 
     /**

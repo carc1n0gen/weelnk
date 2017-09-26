@@ -2,7 +2,8 @@
 
 namespace App\Handlers;
 
-use App\Component;
+use Slim\Views\PhpRenderer;
+use Psr\Log\LoggerInterface;
 use App\Errors\ValidationException;
 use Carc1n0gen\ShortLink\Errors\DecodingException;
 
@@ -11,8 +12,17 @@ use Carc1n0gen\ShortLink\Errors\DecodingException;
  *
  * This handler responds as json or web page depending on the request type
  */
-class ErrorHandler extends Component
+class ErrorHandler
 {
+    protected $view;
+    protected $logger;
+
+    public function __construct(PhpRenderer $view, LoggerInterface $logger)
+    {
+        $this->view = $view;
+        $this->logger = $logger;
+    }
+
     public function __invoke($request, $response, $exception)
     {
         switch(get_class($exception))

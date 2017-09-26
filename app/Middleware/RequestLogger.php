@@ -2,13 +2,20 @@
 
 namespace App\Middleware;
 
-use App\Component;
+use Psr\Log\LoggerInterface;
 
 /**
  * This middleware logs request information for each request
  */
-class RequestLogger extends Component
+class RequestLogger
 {
+    protected $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     public function __invoke($request, $response, $next)
     {
         $this->logger->addInfo('Incoming request', [

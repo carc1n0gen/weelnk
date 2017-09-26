@@ -2,15 +2,25 @@
 
 namespace App\Handlers;
 
-use App\Component;
+use App\Stores\LinkStore;
+use Slim\Views\PhpRenderer;
 use App\Errors\ValidationException;
 
 /**
  *  Shorten a url and present the generated shortlink
  */
-class LinkShortenHandler extends Component
+class LinkShortenHandler
 {
     const PATTERN = '((https?:\/\/)?(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})';
+
+    protected $linkStore;
+    protected $view;
+
+    public function __construct(LinkStore $linkStore, PhpRenderer $view)
+    {
+        $this->linkStore = $linkStore;
+        $this->view = $view;
+    }
 
     protected function validate($params)
     {
@@ -28,7 +38,7 @@ class LinkShortenHandler extends Component
         $this->validate($request->getParsedBody());
 
         $url = $request->getParsedBodyParam('url');
-        $shortLink = $this->LinkStore->findOrCreate($url);
+        $shortLink = $this->linkStore->findOrCreate($url);
 
         $data = [
             'code' => 'ok',
