@@ -2,16 +2,23 @@
 
 require __DIR__.'/../bootstrap/autoload.php';
 
-use Illuminate\Database\Capsule\Manager as Capsule;
+$app = require __DIR__.'/../bootstrap/app.php';
+$connection = $app->getContainer()->get('db');
 
-$output = new \Symfony\Component\Console\Output\NullOutput();
+$configuration = new Doctrine\DBAL\Migrations\Configuration\Configuration($connection);
+$configuration->setMigrationsDirectory(__DIR__.'/../migrations');
+$configuration->setMigrationsNamespace('Migrations');
 
-$container = require __DIR__.'/../config/phpmig.php';
+$migration = new Doctrine\DBAL\Migrations\Migration($configuration);
 
-$phpmig = new \Phpmig\Api\PhpmigApplication($container, $output);
+$path = __DIR__.'/../weelnk-test.sqlite';
+if (file_exists($path)) {
+    unlink($path);
+}
 
-$phpmig->down();
-$phpmig->up();
+$migration->migrate();
+
+// Seed test data
 
 $urls = [
     'https://github.com/davedevelopment/phpmig/commit/e24b303936931c9b912f13ad0a3ea8351efa8f00',
@@ -20,17 +27,14 @@ $urls = [
     'https://google.ca'
 ];
 
-Capsule::table('links')->insert([
-    [
-        'url' => $urls[0],
-        'md5' => md5($urls[0]),
-    ],
-    [
-        'url' => $urls[1],
-        'md5' => md5($urls[1]),
-    ],
-    [
-        'url' => $urls[2],
-        'md5' => md5($urls[2]),
-    ],
-]);
+foreach($urls as $url) {
+    $connection->createQueryBuilder()
+        ->insert('links')
+        ->values([
+            'md5' => '?',
+            'url' => '?',
+        ])
+        ->setParameter(0, md5($url))
+        ->setParameter(1, $url)
+        ->execute();
+}

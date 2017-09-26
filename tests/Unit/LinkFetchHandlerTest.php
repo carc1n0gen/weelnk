@@ -15,7 +15,10 @@ class LinkFetchHandlerTest extends TestCase
     public function setUp()
     {
         $this->app = self::createApplication();
-        $this->controller = new LinkFetchHandler($this->app->getContainer());
+        $this->controller = new LinkFetchHandler(
+            $this->app->getContainer()->get('LinkStore'),
+            $this->app->getContainer()->get('view')
+        );
     }
 
     public function testShouldThrowDecodingException()
@@ -24,7 +27,7 @@ class LinkFetchHandlerTest extends TestCase
 
         $req = $this->app->getContainer()->get('request');
         $res = $this->app->getContainer()->get('response');
-        $args = ['shortLink' => '!>,'];
+        $args = ['shortLink' => '_'];
 
         $controller = $this->controller;
         $controller($req, $res, $args);
@@ -42,7 +45,7 @@ class LinkFetchHandlerTest extends TestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    public function testShouldRespondOk()
+    public function testShouldRespondWithRedirect()
     {
         $req = $this->app->getContainer()->get('request');
         $res = $this->app->getContainer()->get('response');
@@ -51,22 +54,6 @@ class LinkFetchHandlerTest extends TestCase
         $controller = $this->controller;
         $response = $controller($req, $res, $args);
 
-        $this->assertEquals(302, $response->getStatusCode());
-    }
-
-    public function testShouldPullFromCacheIfCached()
-    {
-        $mock = Mockery::mock();
-        $mock->shouldReceive('has')->andReturn(true)->once();
-        $mock->shouldReceive('get')->andReturn('https://google.ca')->once();
-        $this->app->getContainer()['cache'] = $mock;
-
-        $req = $this->app->getContainer()->get('request');
-        $res = $this->app->getContainer()->get('response');
-        $args = ['shortLink' => 'b'];
-
-        $controller = $this->controller;
-        $response = $controller($req, $res, $args);
         $this->assertEquals(302, $response->getStatusCode());
     }
 }

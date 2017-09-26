@@ -2,3 +2,5 @@
 /.vscode
 /database/migrations/.migrations.log
 .env
+.DS_Store
+weelnk-test.sqlite

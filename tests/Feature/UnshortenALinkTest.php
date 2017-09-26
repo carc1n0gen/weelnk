@@ -32,7 +32,7 @@ class UnshortenALinkTest extends TestCase
     {
         $env = Environment::mock([
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/!@^',
+            'REQUEST_URI' => '/_',
             'SERVER_NAME' => 'test.com',
             'HTTP_HOST' => 'test.com',
         ]);

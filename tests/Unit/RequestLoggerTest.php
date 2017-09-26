@@ -24,7 +24,9 @@ class RequestLoggerTest extends TestCase
 
         $req = self::$app->getContainer()->get('request');
         $res = self::$app->getContainer()->get('response');
-        $middleware = new RequestLogger(self::$app->getContainer());
+        $middleware = new RequestLogger(
+            self::$app->getContainer()->get('logger')
+        );
 
         $response = $middleware($req, $res, function ($req, $res) {
             return $res;

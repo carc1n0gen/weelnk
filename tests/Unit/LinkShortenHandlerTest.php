@@ -18,7 +18,10 @@ class LinkShortenHandlerTest extends TestCase
     public function setUp()
     {
         $this->app = $this->createApplication();
-        $this->controller = new LinkShortenHandler($this->app->getContainer());
+        $this->controller = new LinkShortenHandler(
+            $this->app->getContainer()->get('LinkStore'),
+            $this->app->getContainer()->get('view')
+        );
     }
 
     public function testShouldThrowValidationExceptionWithKnowParameter()
