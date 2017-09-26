@@ -32,83 +32,72 @@ $container['response'] = function ($c) {
     return $response->withProtocolVersion($c->get('settings')['httpVersion']);
 };
 
-$container['errorHandler'] = function ($c) {
-    return new App\Handlers\ErrorHandler($c);
-};
-
 $container['db'] = function ($c) {
-    $drivers = [
-        'sqlite' => 'pdo_sqlite',
-        'mysql' => 'pdo_mysql',
-        'pgsql' => 'pdo_pgsql',
-    ];
-    $ports = [
-        'mysql' => 3306,
-        'pgsql' => 5432,
-    ];
+    $type = getenv('DB_TYPE') ?: 'mysql';
+    $username = getenv('DB_USERNAME') ?: 'root';
+    $password = getenv('DB_PASSWORD') ?: 'root';
+    $host = getenv('DB_HOST') ?: '127.0.0.1';
+    $database = $type === 'sqlite'
+        ? getenv('DB_DATABASE') ?: __DIR__.'/../storage/database/weelnk.sqlite'
+        : getenv('DB_DATABASE') ?: 'weelnk';
 
     $config = new \Doctrine\DBAL\Configuration();
-
-    $type = getenv('DB_TYPE') ?: 'mysql';
-    $connectionParams = array(
-        'dbname' => getenv('DB_DATABASE') ?: 'weelnk',
-        'user' => getenv('DB_USERNAME') ?: 'root',
-        'password' => getenv('DB_PASSWORD') ?: '',
-        'host' => getenv('DB_HOST') ?: '127.0.0.1',
-        'port' => getenv('DB_PORT') ?: $ports[$type],
-        'driver' => $drivers[$type],
-    );
-
+    $connectionParams = [
+        'url' => "$type://$username:$password@$host/$database"
+    ];
     return \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 };
 
 $container['LinkStore'] = function ($c) {
-    return new App\Stores\LinkStore($c);
+    return new App\Stores\LinkStore(
+        $c['shortlink'],
+        $c['db'],
+        $c['cache']
+    );
 };
 
 $container['view'] = function ($c) {
     return new \Slim\Views\PhpRenderer(__DIR__.'/../app/views/');
 };
 
-// $container['redis'] = function ($c) {
-//     return new Illuminate\Redis\RedisManager(
-//         'predis',
-//         [
-//             'default' => [
-//                 'scheme' => 'tcp',
-//                 'host' => getenv('REDIS_HOST') ?: '127.0.0.1',
-//                 'port' => getenv('REDIS_PORT') ?: 6379,
-//             ],
-//             'options' => [
-//                 'parameters' => [
-//                     'password' => getenv('REDIS_PASSWORD') ?: null,
-//                 ],
-//             ],
-//         ]
-//     );
-// };
+$container['fileSystem'] = function ($c) {
+    $adapter = new League\Flysystem\Adapter\Local(__DIR__.'/../storage');
+    return new League\Flysystem\Filesystem($adapter);
+};
 
-// $container['cache'] = function ($c) {
-//     $driver = getenv('CACHE_DRIVER') ?: 'file';
-//     switch ($driver) {
-//         case 'array':
-//             $cache = new Illuminate\Cache\ArrayStore();
-//             break;
+$container['cache'] = function ($c) {
+    $driver = getenv('CACHE_DRIVER') ?: 'file';
+    switch($driver) {
+        case 'array':
+            $pool = new Cache\Adapter\PHPArray\ArrayCachePool();
+            break;
 
-//         case 'file':
-//             $cache = new Illuminate\Cache\FileStore($c->get('fileSystem'), __DIR__.'/../storage/cache/links');
-//             break;
+        case 'file':
+            $pool = new Cache\Adapter\Filesystem\FilesystemCachePool($c['fileSystem']);
+            $pool->setFolder('cache');
+            break;
 
-//         case 'redis':
-//             $cache = new Illuminate\Cache\RedisStore($c->get('redis'), 'weelnk');
-//             break;
+        case 'redis':
+            $host = getenv('REDIS_HOST') ?: '127.0.0.1';
+            $port = getenv('REDIS_PORT') ?: 6379;
+            $client = new \Predis\Client("tcp:/$host:$port");
+            $pool = new \Cache\Adapter\Predis\PredisCachePool($client);
+            break;
 
-//         default:
-//             throw new \Exception("Unsupported cache driver \"$driver\"");
-//     }
+        case 'memcached':
+            $host = getenv('MEMCACHED_HOST') ?: '127.0.0.1';
+            $port = getenv('MEMCACHED_PORT') ?: 11211;
+            $client = new \Memcached();
+            $client->addServer($host, $port);
+            $pool = new \Cache\Adapter\Memcached\MemcachedCachePool($client);
+            break;
 
-//     return new Illuminate\Cache\Repository($cache);
-// };
+        default:
+            throw new \Exception("Unsupported cache driver \"$driver\"");
+    }
+
+    return $pool;
+};
 
 $container['logger'] = function ($c) {
     $logger = new Monolog\Logger('weelnk');
@@ -121,12 +110,47 @@ $container['logger'] = function ($c) {
 };
 
 $container['shortlink'] = function ($c) {
-    return new Carc1n0gen\ShortLink\Converter('abcdefghijklmnopqrswpwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
+    return new Carc1n0gen\ShortLink\Converter(
+        'abcdefghijklmnopqrswpwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+    );
 };
 
-// $container['fileSystem'] = function ($c) {
-//     return new Illuminate\Filesystem\Filesystem();
-// };
+/*
+|--------------------------------------------------------------------------
+| Controllers\Handlers
+|--------------------------------------------------------------------------
+*/
+
+$container['errorHandler'] = function ($c) {
+    return new App\Handlers\ErrorHandler(
+        $c['view'],
+        $c['logger']
+    );
+};
+
+$container[App\Handlers\LinkShortenHandler::class] = function ($c) {
+    return new App\Handlers\LinkShortenHandler(
+        $c['LinkStore'],
+        $c['view']
+    );
+};
+
+$container[App\Handlers\LinkFetchHandler::class] = function ($c) {
+    return new App\Handlers\LinkFetchHandler(
+        $c['LinkStore'],
+        $c['view']
+    );
+};
+
+/*
+|--------------------------------------------------------------------------
+| Middlewares
+|--------------------------------------------------------------------------
+*/
+
+$container[App\Middleware\RequestLogger::class] = function ($c) {
+    return new App\Middleware\RequestLogger($c['logger']);
+};
 
 $app->add(App\Middleware\RequestLogger::class);
 
@@ -140,8 +164,8 @@ $app->get('/', function ($request, $response) {
     return $this->view->render($response, 'form.php');
 });
 
-$app->get('/{shortLink}', App\Handlers\LinkFetchHandler::class);
-
 $app->post('/', App\Handlers\LinkShortenHandler::class);
+
+$app->get('/{shortLink}', App\Handlers\LinkFetchHandler::class);
 
 return $app;
