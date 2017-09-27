@@ -2,9 +2,13 @@
 
 namespace App\Handlers;
 
+
+use App\Cookies;
 use App\Stores\LinkStore;
 use Slim\Views\PhpRenderer;
 use App\Errors\ValidationException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  *  Shorten a url and present the generated shortlink
@@ -15,11 +19,13 @@ class LinkShortenHandler
 
     protected $linkStore;
     protected $view;
+    protected $cookies;
 
-    public function __construct(LinkStore $linkStore, PhpRenderer $view)
+    public function __construct(LinkStore $linkStore, PhpRenderer $view, Cookies $cookies)
     {
         $this->linkStore = $linkStore;
         $this->view = $view;
+        $this->cookies = $cookies;
     }
 
     protected function validate($params)
@@ -33,7 +39,7 @@ class LinkShortenHandler
             }
     }
 
-    public function __invoke($request, $response)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->validate($request->getParsedBody());
 
@@ -44,6 +50,11 @@ class LinkShortenHandler
             'code' => 'ok',
             'link' => $request->getSchemeAndHttpHost().'/'.$shortLink,
         ];
+
+        if (!$request->isJson()) {
+            $data['theme'] = $this->cookies->get('theme') ?: 'light';
+        }
+        
         return $request->isJson() ? $response->withJson($data)
             : $this->view->render($response, 'form.php', $data);
     }

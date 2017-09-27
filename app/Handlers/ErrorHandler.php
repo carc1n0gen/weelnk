@@ -2,10 +2,14 @@
 
 namespace App\Handlers;
 
+use App\Cookies;
 use Slim\Views\PhpRenderer;
 use Psr\Log\LoggerInterface;
 use App\Errors\ValidationException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Carc1n0gen\ShortLink\Errors\DecodingException;
+use Cache\Adapter\Common\Exception\InvalidArgumentException;
 
 /**
  * The application error handler
@@ -14,28 +18,48 @@ use Carc1n0gen\ShortLink\Errors\DecodingException;
  */
 class ErrorHandler
 {
+    /**
+     * @var PhpRenderer
+     */
     protected $view;
+
+    /**
+     * @var LoggerInterface
+     */
     protected $logger;
 
-    public function __construct(PhpRenderer $view, LoggerInterface $logger)
+    /**
+     * @var Cookies
+     */
+    protected $cookies;
+
+    public function __construct(PhpRenderer $view, LoggerInterface $logger, Cookies $cookies)
     {
         $this->view = $view;
         $this->logger = $logger;
+        $this->cookies = $cookies;
     }
 
-    public function __invoke($request, $response, $exception)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $exception)
     {
         switch(get_class($exception))
         {
             case ValidationException::class:
                 $status = 400;
                 $data = ['code' => 'badRequest', 'msg' => $exception->getMessage()];
+                if (!$request->isJson()) {
+                    $data['theme'] = $this->cookies->get($request, 'theme') ?: 'light';
+                }
                 $response = $request->isJson() ? $response->withJson($data) : $this->view->render($response, 'form.php', $data);
                 break;
 
             case DecodingException::class:
+            case InvalidArgumentException::class:
                 $status = 404;
-                $data = ['code' => 'notFound','msg' => 'No link found'];
+                $data = ['code' => 'notFound', 'msg' => 'No link found'];
+                if (!$request->isJson()) {
+                    $data['theme'] = $this->cookies->get($request, 'theme') ?: 'light';
+                }
                 $response = $request->isJson() ? $response->withJson($data) : $this->view->render($response, 'form.php', $data);
                 break;
 
@@ -43,6 +67,9 @@ class ErrorHandler
                 $this->logger->addError('Unknown error', ['exception' => $exception]);
                 $status = 500;
                 $data = ['code' => 'unknownError', 'msg' => 'An unknow nerror occurred'];
+                if (!$request->isJson()) {
+                    $data['theme'] = $this->cookies->get($request, 'theme') ?: 'light';
+                }
                 $response = $request->isJson() ? $response->withJson($data) : $this->view->render($response, 'form.php', $data);
         }
 
