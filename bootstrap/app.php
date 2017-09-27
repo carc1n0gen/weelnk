@@ -1,18 +1,24 @@
 <?php
 
+use App\Cookies;
+use Slim\Views\PhpRenderer;
+use Psr\Log\LoggerInterface;
+use Doctrine\DBAL\Connection;
+use League\Flysystem\Filesystem;
+use App\Handlers\LinkFetchHandler;
+use Carc1n0gen\ShortLink\Converter;
+use App\Handlers\LinkShortenHandler;
+use Psr\Http\Message\ResponseInterface;
+use Cache\Adapter\Common\AbstractCachePool;
+use Psr\Http\Message\ServerRequestInterface;
+
 /*
 |--------------------------------------------------------------------------
 | Initialize the slim app
 |--------------------------------------------------------------------------
 */
 
-$config = [
-    'settings' => [
-        'displayErrorDetails' => getenv('APP_DEBUG') ?: false,
-    ],
-];
-
-$app = new Slim\App($config);
+$app = new DI\Bridge\Slim\App();
 
 /*
 |--------------------------------------------------------------------------
@@ -22,17 +28,31 @@ $app = new Slim\App($config);
 
 $container = $app->getContainer();
 
-$container['request'] = function ($c) {
-    return App\Request::createFromEnvironment($c->get('environment'));
-};
+$container->set('settings.displayErrorDetails', getenv('APP_DEBUG') ?: false);
 
-$container['response'] = function ($c) {
+$container->set('request', function ($c) {
+    return App\Request::createFromEnvironment($c->get('environment'));
+});
+
+$container->set('response', function ($c) {
     $headers = new Slim\Http\Headers(['Content-Type' => 'text/html; charset=UTF-8']);
     $response = new App\Response(200, $headers);
     return $response->withProtocolVersion($c->get('settings')['httpVersion']);
-};
+});
 
-$container['db'] = function ($c) {
+$container->set('errorHandler', function ($c) {
+    return new App\Handlers\ErrorHandler(
+        $c->get(PhpRenderer::class),
+        $c->get(LoggerInterface::class),
+        new App\Cookies()
+    );
+});
+
+$container->set(PhpRenderer::class, function ($c) {
+    return new \Slim\Views\PhpRenderer(__DIR__.'/../app/views/');
+});
+
+$container->set(Connection::class, function ($c) {
     $type = getenv('DB_TYPE') ?: 'mysql';
     $username = getenv('DB_USERNAME') ?: 'root';
     $password = getenv('DB_PASSWORD') ?: 'root';
@@ -46,26 +66,14 @@ $container['db'] = function ($c) {
         'url' => "$type://$username:$password@$host/$database"
     ];
     return \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
-};
+});
 
-$container['LinkStore'] = function ($c) {
-    return new App\Stores\LinkStore(
-        $c['shortlink'],
-        $c['db'],
-        $c['cache']
-    );
-};
-
-$container['view'] = function ($c) {
-    return new \Slim\Views\PhpRenderer(__DIR__.'/../app/views/');
-};
-
-$container['fileSystem'] = function ($c) {
+$container->set(Filesystem::class, function ($c) {
     $adapter = new League\Flysystem\Adapter\Local(__DIR__.'/../storage');
     return new League\Flysystem\Filesystem($adapter);
-};
+});
 
-$container['cache'] = function ($c) {
+$container->set(AbstractCachePool::class, function ($c) {
     $driver = getenv('CACHE_DRIVER') ?: 'file';
     switch($driver) {
         case 'array':
@@ -73,7 +81,7 @@ $container['cache'] = function ($c) {
             break;
 
         case 'file':
-            $pool = new Cache\Adapter\Filesystem\FilesystemCachePool($c['fileSystem']);
+            $pool = new Cache\Adapter\Filesystem\FilesystemCachePool($c->get(Filesystem::class));
             $pool->setFolder('cache');
             break;
 
@@ -97,9 +105,10 @@ $container['cache'] = function ($c) {
     }
 
     return $pool;
-};
+});
 
-$container['logger'] = function ($c) {
+$container->set(LoggerInterface::class, function ($c) {
+    // TODO: add syslog options
     $logger = new Monolog\Logger('weelnk');
     $file_handler = new Monolog\Handler\StreamHandler(
         __DIR__.'/../storage/logs/weelnk.log',
@@ -107,40 +116,13 @@ $container['logger'] = function ($c) {
     );
     $logger->pushHandler($file_handler);
     return $logger;
-};
+});
 
-$container['shortlink'] = function ($c) {
+$container->set(Converter::class, function ($c) {
     return new Carc1n0gen\ShortLink\Converter(
         'abcdefghijklmnopqrswpwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
     );
-};
-
-/*
-|--------------------------------------------------------------------------
-| Controllers\Handlers
-|--------------------------------------------------------------------------
-*/
-
-$container['errorHandler'] = function ($c) {
-    return new App\Handlers\ErrorHandler(
-        $c['view'],
-        $c['logger']
-    );
-};
-
-$container[App\Handlers\LinkShortenHandler::class] = function ($c) {
-    return new App\Handlers\LinkShortenHandler(
-        $c['LinkStore'],
-        $c['view']
-    );
-};
-
-$container[App\Handlers\LinkFetchHandler::class] = function ($c) {
-    return new App\Handlers\LinkFetchHandler(
-        $c['LinkStore'],
-        $c['view']
-    );
-};
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -148,10 +130,7 @@ $container[App\Handlers\LinkFetchHandler::class] = function ($c) {
 |--------------------------------------------------------------------------
 */
 
-$container[App\Middleware\RequestLogger::class] = function ($c) {
-    return new App\Middleware\RequestLogger($c['logger']);
-};
-
+$app->add(App\Middleware\CookieFetcher::class);
 $app->add(App\Middleware\RequestLogger::class);
 
 /*
@@ -160,12 +139,13 @@ $app->add(App\Middleware\RequestLogger::class);
 |--------------------------------------------------------------------------
 */
 
-$app->get('/', function ($request, $response) {
-    return $this->view->render($response, 'form.php');
+$app->get('/', function (ServerRequestInterface $request, ResponseInterface $response, PhpRenderer $view, Cookies $cookies) {
+    $theme = $cookies->get($request, 'theme') ?: 'light';
+    return $view->render($response, 'form.php', ['theme' => $theme]);
 });
 
-$app->post('/', App\Handlers\LinkShortenHandler::class);
+$app->post('/', LinkShortenHandler::class);
 
-$app->get('/{shortLink}', App\Handlers\LinkFetchHandler::class);
+$app->get('/{shortLink}', LinkFetchHandler::class);
 
 return $app;
