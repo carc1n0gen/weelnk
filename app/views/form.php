@@ -228,7 +228,7 @@ footer {
 <div class="container">
 
 	<header>
-		<a href="/"><h1>weelnk</h1></a>
+		<h1><a href="/">weelnk</a></h1>
 	</header>
 	
 		
