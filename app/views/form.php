@@ -63,8 +63,16 @@ a {
 .shorten {
 	width: 14%;
 	background-color: #2AA198;
-	color: #FDF6E3;
 	cursor: pointer;
+	transition: color 500ms linear;
+}
+
+.light .shorten {
+	color: #FDF6E3;
+}
+
+.dark .shorten {
+	color: #022B35;
 }
 
 .url,
