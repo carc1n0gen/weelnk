@@ -41,11 +41,11 @@ class LinkShortenHandler
     protected function validate($params)
     {
             if (!isset($params['url']) || !$params['url']) {
-                throw new ValidationException('a url is required');
+                throw new ValidationException('A link is required');
             }
 
             if (!preg_match(self::PATTERN, $params['url'])) {
-                throw new ValidationException('The url format is invalid');
+                throw new ValidationException('Please enter a valid link');
             }
     }
 
