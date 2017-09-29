@@ -1,6 +1,6 @@
 <?php
 
-use App\Cookies;
+use App\CookieHelper;
 use Slim\Views\PhpRenderer;
 use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Connection;
@@ -44,7 +44,7 @@ $container->set('errorHandler', function ($c) {
     return new App\Handlers\ErrorHandler(
         $c->get(PhpRenderer::class),
         $c->get(LoggerInterface::class),
-        new App\Cookies()
+        $c->get(CookieHelper::class)
     );
 });
 
@@ -124,13 +124,16 @@ $container->set(Converter::class, function ($c) {
     );
 });
 
+$container->set(CookieHelper::class, function ($c) {
+    return new CookieHelper();
+});
+
 /*
 |--------------------------------------------------------------------------
 | Middlewares
 |--------------------------------------------------------------------------
 */
 
-$app->add(App\Middleware\CookieFetcher::class);
 $app->add(App\Middleware\RequestLogger::class);
 
 /*
@@ -139,7 +142,7 @@ $app->add(App\Middleware\RequestLogger::class);
 |--------------------------------------------------------------------------
 */
 
-$app->get('/', function (ServerRequestInterface $request, ResponseInterface $response, PhpRenderer $view, Cookies $cookies) {
+$app->get('/', function (ServerRequestInterface $request, ResponseInterface $response, PhpRenderer $view, CookieHelper $cookies) {
     $theme = $cookies->get($request, 'theme') ?: 'light';
     return $view->render($response, 'form.php', ['theme' => $theme]);
 });

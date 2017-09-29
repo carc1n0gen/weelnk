@@ -2,12 +2,12 @@
 
 namespace App\Handlers;
 
-use App\Cookies;
+use App\Request;
+use App\Response;
+use App\CookieHelper;
 use Slim\Views\PhpRenderer;
 use Psr\Log\LoggerInterface;
 use App\Errors\ValidationException;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Carc1n0gen\ShortLink\Errors\DecodingException;
 use Cache\Adapter\Common\Exception\InvalidArgumentException;
 
@@ -29,18 +29,18 @@ class ErrorHandler
     protected $logger;
 
     /**
-     * @var Cookies
+     * @var CookieHelper
      */
     protected $cookies;
 
-    public function __construct(PhpRenderer $view, LoggerInterface $logger, Cookies $cookies)
+    public function __construct(PhpRenderer $view, LoggerInterface $logger, CookieHelper $cookies)
     {
         $this->view = $view;
         $this->logger = $logger;
         $this->cookies = $cookies;
     }
 
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $exception)
+    public function __invoke(Request $request, Response $response, $exception)
     {
         switch(get_class($exception))
         {

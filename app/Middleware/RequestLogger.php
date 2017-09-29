@@ -3,6 +3,8 @@
 namespace App\Middleware;
 
 use Psr\Log\LoggerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * This middleware logs request information for each request
@@ -16,7 +18,7 @@ class RequestLogger
         $this->logger = $logger;
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         $this->logger->addInfo('Incoming request', [
             'ip' => $request->getRemoteAddress(),

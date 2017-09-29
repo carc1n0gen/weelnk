@@ -2,11 +2,11 @@
 
 namespace App\Handlers;
 
-use App\Cookies;
+use App\Request;
+use App\Response;
+use App\CookieHelper;
 use App\Stores\LinkStore;
 use Slim\Views\PhpRenderer;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Fech the url for a given shortlink
@@ -23,14 +23,19 @@ class LinkFetchHandler
      */
     protected $view;
 
-    public function __construct(LinkStore $linkStore, PhpRenderer $view, Cookies $cookies)
+    /**
+     * @var CookieHelper
+     */
+    protected $cookies;
+
+    public function __construct(LinkStore $linkStore, PhpRenderer $view, CookieHelper $cookies)
     {
         $this->linkStore = $linkStore;
         $this->view = $view;
         $this->cookies = $cookies;
     }
 
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $shortLink)
+    public function __invoke(Request $request, Response $response, $shortLink)
     {
         $url = $this->linkStore->find($shortLink);
         if ($url) {
