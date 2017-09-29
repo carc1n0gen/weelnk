@@ -66,6 +66,6 @@ class LinkShortenHandler
         }
         
         return $request->isJson() ? $response->withJson($data)
-            : $this->view->render($response, 'form.php', $data);
+            : $this->view->render($response, 'show.php', $data);
     }
 }
