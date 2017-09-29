@@ -5,7 +5,7 @@
 
 <title>weelnk</title>
 
-<style type="text/css">
+<style>
 * {
 	box-sizing: border-box;
 }
@@ -32,10 +32,6 @@ header {
 
 h1 {
     margin: 0 0 1em;
-}
-
-header a {
-	color: #B4881D;
 }
 
 a {
@@ -110,8 +106,8 @@ a {
 	margin: 2em 0 0;
 }
 
-.link a {
-	color: #268BD2;
+a {
+	color: #32A198;
 }
 
 .theme-picker {
@@ -136,10 +132,6 @@ a {
 
 footer {
 	text-align: center;
-}
-
-footer a {
-	color: #32A198;
 }
 
 @media screen and (max-width: 30em) {
