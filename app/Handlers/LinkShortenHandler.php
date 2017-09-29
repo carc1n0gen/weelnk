@@ -41,7 +41,7 @@ class LinkShortenHandler
     protected function validate($params)
     {
             if (!isset($params['url']) || !$params['url']) {
-                throw new ValidationException('url parameter is required');
+                throw new ValidationException('a url is required');
             }
 
             if (!preg_match(self::PATTERN, $params['url'])) {
