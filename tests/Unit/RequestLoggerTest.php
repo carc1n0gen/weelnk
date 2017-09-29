@@ -20,7 +20,7 @@ class RequestLoggerTest extends TestCase
     {
         $mock = Mockery::mock(Logger::class.'[addInfo]', ['weelnk']);
         $mock->shouldReceive('addInfo')->once();
-        self::$app->getContainer()['logger'] = $mock;
+        self::$app->getContainer()->set('logger', $mock);
 
         $req = self::$app->getContainer()->get('request');
         $res = self::$app->getContainer()->get('response');

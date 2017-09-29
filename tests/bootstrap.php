@@ -2,8 +2,10 @@
 
 require __DIR__.'/../bootstrap/autoload.php';
 
+use Doctrine\DBAL\Connection;
+
 $app = require __DIR__.'/../bootstrap/app.php';
-$connection = $app->getContainer()->get('db');
+$connection = $app->getContainer()->get(Connection::class);
 
 $configuration = new Doctrine\DBAL\Migrations\Configuration\Configuration($connection);
 $configuration->setMigrationsDirectory(__DIR__.'/../migrations');

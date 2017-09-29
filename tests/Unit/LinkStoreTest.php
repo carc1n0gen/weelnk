@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Mockery;
 use Tests\TestCase;
+use App\Stores\LinkStore;
 use Doctrine\DBAL\Connection;
 use Cache\Adapter\Common\CacheItem;
 use Cache\Adapter\Common\AbstractCachePool;
@@ -20,13 +21,13 @@ class LinkStoreTest extends TestCase
 
     public function testFindShouldFindUrl()
     {
-        $linkStore = $this->app->getContainer()->get('LinkStore');
+        $linkStore = $this->app->getContainer()->get(LinkStore::class);
         $this->assertNotNull($linkStore->find('b'));
     }
 
     public function testFindShouldReturnNull()
     {
-        $linkStore = $this->app->getContainer()->get('LinkStore');
+        $linkStore = $this->app->getContainer()->get(LinkStore::class);
         $this->assertNull($linkStore->find('zzz'));
     }
 
@@ -38,9 +39,9 @@ class LinkStoreTest extends TestCase
         $databaseMock = Mockery::mock(Connection::class);
         $databaseMock->shouldReceive('createQueryBuilder->select->from->where->setParameter->execute->fetch')->once();
 
-        $this->app->getContainer()['cache'] = $cacheMock;
-        $this->app->getContainer()['db'] = $databaseMock;
-        $linkStore = $this->app->getContainer()->get('LinkStore');
+        $this->app->getContainer()->set(AbstractCachePool::class, $cacheMock);
+        $this->app->getContainer()->set(Connection::class, $databaseMock);
+        $linkStore = $this->app->getContainer()->get(LinkStore::class);
         $linkStore->find('z');
     }
 
@@ -52,9 +53,9 @@ class LinkStoreTest extends TestCase
         $databaseMock = Mockery::mock(Connection::class);
         $databaseMock->shouldNotReceive('createQueryBuilder');
 
-        $this->app->getContainer()['cache'] = $cacheMock;
-        $this->app->getContainer()['db'] = $databaseMock;
-        $linkStore = $this->app->getContainer()->get('LinkStore');
+        $this->app->getContainer()->set(AbstractCachePool::class, $cacheMock);
+        $this->app->getContainer()->set(Connection::class, $databaseMock);
+        $linkStore = $this->app->getContainer()->get(LinkStore::class);
         $linkStore->find('z');
     }
 
@@ -72,9 +73,9 @@ class LinkStoreTest extends TestCase
                 'md5' => 'thisIsNotARealMd5',
             ]);
 
-        $this->app->getContainer()['cache'] = $cacheMock;
-        $this->app->getContainer()['db'] = $databaseMock;
-        $linkStore = $this->app->getContainer()->get('LinkStore');
+        $this->app->getContainer()->set(AbstractCachePool::class, $cacheMock);
+        $this->app->getContainer()->set(Connection::class, $databaseMock);
+        $linkStore = $this->app->getContainer()->get(LinkStore::class);
         $linkStore->find('z');
     }
 
@@ -98,9 +99,9 @@ class LinkStoreTest extends TestCase
                 'md5' => 'NotARealMd5',
             ]);
 
-        $this->app->getContainer()['cache'] = $cacheMock;
-        $this->app->getContainer()['db'] = $databaseMock;
-        $linkStore = $this->app->getContainer()->get('LinkStore');
+        $this->app->getContainer()->set(AbstractCachePool::class, $cacheMock);
+        $this->app->getContainer()->set(Connection::class, $databaseMock);
+        $linkStore = $this->app->getContainer()->get(LinkStore::class);
         $linkStore->findOrCreate('ww.omg-wtf-cool.com');
     }
 
@@ -117,9 +118,9 @@ class LinkStoreTest extends TestCase
             ->once();
         $databaseMock->shouldReceive('lastInsertId')->andReturn(55);
 
-        $this->app->getContainer()['cache'] = $cacheMock;
-        $this->app->getContainer()['db'] = $databaseMock;
-        $linkStore = $this->app->getContainer()->get('LinkStore');
+        $this->app->getContainer()->set(AbstractCachePool::class, $cacheMock);
+        $this->app->getContainer()->set(Connection::class, $databaseMock);
+        $linkStore = $this->app->getContainer()->get(LinkStore::class);
         $linkStore->findOrCreate('www.example.com');
     }
 
@@ -131,9 +132,9 @@ class LinkStoreTest extends TestCase
         $databaseMock = Mockery::mock(Connection::class);
         $databaseMock->shouldNotReceive('createQueryBuilder');
 
-        $this->app->getContainer()['cache'] = $cacheMock;
-        $this->app->getContainer()['db'] = $databaseMock;
-        $linkStore = $this->app->getContainer()->get('LinkStore');
+        $this->app->getContainer()->set(AbstractCachePool::class, $cacheMock);
+        $this->app->getContainer()->set(Connection::class, $databaseMock);
+        $linkStore = $this->app->getContainer()->get(LinkStore::class);
         $linkStore->findOrCreate('www.example.com');
     }
 
@@ -141,7 +142,7 @@ class LinkStoreTest extends TestCase
 
     public function testCreateNotThrowUniqueConstraintViolationException()
     {
-        $linkStore = $this->app->getContainer()->get('LinkStore');
+        $linkStore = $this->app->getContainer()->get(LinkStore::class);
         $linkStore->create('www.some-wacky-url.com');
     }
 
@@ -149,7 +150,7 @@ class LinkStoreTest extends TestCase
     {
         $this->expectException(UniqueConstraintViolationException::class);
 
-        $linkStore = $this->app->getContainer()->get('LinkStore');
+        $linkStore = $this->app->getContainer()->get(LinkStore::class);
         $linkStore->create('www.some-wacky-url2.com');
         $linkStore->create('www.some-wacky-url2.com');
     }

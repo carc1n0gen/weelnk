@@ -4,6 +4,9 @@ namespace Tests\Unit;
 
 use Mockery;
 use Tests\TestCase;
+use App\CookieHelper;
+use App\Stores\LinkStore;
+use Slim\Views\PhpRenderer;
 use App\Handlers\LinkFetchHandler;
 use Carc1n0gen\ShortLink\Errors\DecodingException;
 
@@ -16,8 +19,9 @@ class LinkFetchHandlerTest extends TestCase
     {
         $this->app = self::createApplication();
         $this->controller = new LinkFetchHandler(
-            $this->app->getContainer()->get('LinkStore'),
-            $this->app->getContainer()->get('view')
+            $this->app->getContainer()->get(LinkStore::class),
+            $this->app->getContainer()->get(PhpRenderer::class),
+            $this->app->getContainer()->get(CookieHelper::class)
         );
     }
 
@@ -27,20 +31,18 @@ class LinkFetchHandlerTest extends TestCase
 
         $req = $this->app->getContainer()->get('request');
         $res = $this->app->getContainer()->get('response');
-        $args = ['shortLink' => '_'];
 
         $controller = $this->controller;
-        $controller($req, $res, $args);
+        $controller($req, $res, '_');
     }
 
     public function testShouldRespondNotFound()
     {
         $req = $this->app->getContainer()->get('request');
         $res = $this->app->getContainer()->get('response');
-        $args = ['shortLink' => 'abc'];
 
         $controller = $this->controller;
-        $response = $controller($req, $res, $args);
+        $response = $controller($req, $res, 'abc');
         
         $this->assertEquals(404, $response->getStatusCode());
     }
@@ -49,10 +51,9 @@ class LinkFetchHandlerTest extends TestCase
     {
         $req = $this->app->getContainer()->get('request');
         $res = $this->app->getContainer()->get('response');
-        $args = ['shortLink' => 'b'];
 
         $controller = $this->controller;
-        $response = $controller($req, $res, $args);
+        $response = $controller($req, $res, 'b');
 
         $this->assertEquals(302, $response->getStatusCode());
     }

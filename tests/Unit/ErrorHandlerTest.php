@@ -4,6 +4,9 @@ namespace Tests\Unit;
 
 use Exception;
 use Tests\TestCase;
+use App\CookieHelper;
+use Slim\Views\PhpRenderer;
+use Psr\Log\LoggerInterface;
 use App\Handlers\ErrorHandler;
 use App\Errors\ValidationException;
 use Carc1n0gen\ShortLink\Errors\DecodingException;
@@ -24,7 +27,11 @@ class ErrorHandlerTest extends TestCase
         $req = self::$container->get('request');
         $res = self::$container->get('response');
         $exception = new ValidationException('You dun goofed');
-        $handler = new ErrorHandler(self::$container->get('view'), self::$container->get('logger'));
+        $handler = new ErrorHandler(
+            self::$container->get(PhPRenderer::class),
+            self::$container->get(LoggerInterface::class),
+            self::$container->get(CookieHelper::class)
+        );
 
         $response = $handler($req, $res, $exception);
         $this->assertEquals(400, $response->getStatusCode());
@@ -35,7 +42,11 @@ class ErrorHandlerTest extends TestCase
         $req = self::$container->get('request');
         $res = self::$container->get('response');
         $exception = new DecodingException('Where did the it go?');
-        $handler = new ErrorHandler(self::$container->get('view'), self::$container->get('logger'));
+        $handler = new ErrorHandler(
+            self::$container->get(PhPRenderer::class),
+            self::$container->get(LoggerInterface::class),
+            self::$container->get(CookieHelper::class)
+        );
 
         $response = $handler($req, $res, $exception);
         $this->assertEquals(404, $response->getStatusCode());
@@ -46,7 +57,11 @@ class ErrorHandlerTest extends TestCase
         $req = self::$container->get('request');
         $res = self::$container->get('response');
         $exception = new Exception('Sort of shit the fan didn\'t ya');
-        $handler = new ErrorHandler(self::$container->get('view'), self::$container->get('logger'));
+        $handler = new ErrorHandler(
+            self::$container->get(PhPRenderer::class),
+            self::$container->get(LoggerInterface::class),
+            self::$container->get(CookieHelper::class)
+        );
 
         $response = $handler($req, $res, $exception);
         $this->assertEquals(500, $response->getStatusCode());

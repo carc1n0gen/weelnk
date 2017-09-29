@@ -22,7 +22,7 @@ class UnshortenALinkTest extends TestCase
             'SERVER_NAME' => 'test.com',
             'HTTP_HOST' => 'test.com',
         ]);
-        $this->app->getContainer()['environment'] = $env;
+        $this->app->getContainer()->set('environment', $env);
 
         $response = $this->app->run(true);
         $this->assertEquals(404, $response->getStatusCode());
@@ -36,7 +36,7 @@ class UnshortenALinkTest extends TestCase
             'SERVER_NAME' => 'test.com',
             'HTTP_HOST' => 'test.com',
         ]);
-        $this->app->getContainer()['environment'] = $env;
+        $this->app->getContainer()->set('environment', $env);
 
         $response = $this->app->run(true);
         $this->assertEquals(404, $response->getStatusCode());
@@ -52,7 +52,7 @@ class UnshortenALinkTest extends TestCase
             'HTTP_HOST' => 'test.com',
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
         ]);
-        $this->app->getContainer()['environment'] = $env;
+        $this->app->getContainer()->set('environment', $env);
 
         $response = $this->app->run(true);
         $body = $response->getBody();
@@ -71,7 +71,7 @@ class UnshortenALinkTest extends TestCase
             'SERVER_NAME' => 'test.com',
             'HTTP_HOST' => 'test.com',
         ]);
-        $this->app->getContainer()['environment'] = $env;
+        $this->app->getContainer()->set('environment', $env);
 
         $response = $this->app->run(true);
         $headers = $response->getHeaders();
