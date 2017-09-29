@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d2203467a0cc59a8cdf5341537218539",
+    "content-hash": "5588f62b24b033d25dafc8c97b9c5842",
     "packages": [
         {
             "name": "cache/adapter-common",
@@ -463,16 +463,16 @@
         },
         {
             "name": "carc1n0gen/short-link",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carc1n0gen/php-shortlink.git",
-                "reference": "79874e94021b1d8bc82daf5838a22d457474ae3f"
+                "reference": "e2748fa76ba552e2f50310f4204a15470ad3f3a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carc1n0gen/php-shortlink/zipball/79874e94021b1d8bc82daf5838a22d457474ae3f",
-                "reference": "79874e94021b1d8bc82daf5838a22d457474ae3f",
+                "url": "https://api.github.com/repos/carc1n0gen/php-shortlink/zipball/e2748fa76ba552e2f50310f4204a15470ad3f3a3",
+                "reference": "e2748fa76ba552e2f50310f4204a15470ad3f3a3",
                 "shasum": ""
             },
             "require-dev": {
@@ -495,7 +495,7 @@
                 }
             ],
             "description": "package for generating short url friendly strings from integer ids",
-            "time": "2017-03-20T21:01:20+00:00"
+            "time": "2017-09-24T02:57:05+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -527,58 +527,6 @@
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "homepage": "https://github.com/container-interop/container-interop",
             "time": "2017-02-14T19:40:03+00:00"
-        },
-        {
-            "name": "dflydev/fig-cookies",
-            "version": "v1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dflydev/dflydev-fig-cookies.git",
-                "reference": "883233c159d00d39e940bd12cfe42c0d23420c1c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dflydev/dflydev-fig-cookies/zipball/883233c159d00d39e940bd12cfe42c0d23420c1c",
-                "reference": "883233c159d00d39e940bd12cfe42c0d23420c1c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4",
-                "psr/http-message": "~1.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "~0.1@dev",
-                "phpunit/phpunit": "~4.5",
-                "squizlabs/php_codesniffer": "~2.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dflydev\\FigCookies\\": "src/Dflydev/FigCookies"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Beau Simensen",
-                    "email": "beau@dflydev.com"
-                }
-            ],
-            "description": "Cookies for PSR-7 HTTP Message Interface.",
-            "keywords": [
-                "cookies",
-                "psr-7",
-                "psr7"
-            ],
-            "time": "2016-03-28T09:10:18+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -3153,16 +3101,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.7.21",
+            "version": "5.7.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3b91adfb64264ddec5a2dee9851f354aa66327db"
+                "reference": "10df877596c9906d4110b5b905313829043f2ada"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3b91adfb64264ddec5a2dee9851f354aa66327db",
-                "reference": "3b91adfb64264ddec5a2dee9851f354aa66327db",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/10df877596c9906d4110b5b905313829043f2ada",
+                "reference": "10df877596c9906d4110b5b905313829043f2ada",
                 "shasum": ""
             },
             "require": {
@@ -3231,7 +3179,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-06-21T08:11:54+00:00"
+            "time": "2017-09-24T07:23:38+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
