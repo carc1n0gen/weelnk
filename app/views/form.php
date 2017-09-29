@@ -35,7 +35,7 @@ h1 {
 }
 
 header a {
-	color: #93A1A1;
+	color: #B4881D;
 }
 
 a {
@@ -139,7 +139,7 @@ footer {
 }
 
 footer a {
-	color: #2D8CCF;
+	color: #32A198;
 }
 
 @media screen and (max-width: 30em) {
