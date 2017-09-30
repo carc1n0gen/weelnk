@@ -2,7 +2,6 @@
 
 <footer>
     <p>&copy; <a href="https://carsonevans.ca">Carson Evans</a> <?= date('Y') ?></p>
-    <p>Check out the code on <a href="https://github.com/carc1n0gen/weelnk">github</a></p>
 </footer>
 
 <div class="theme-picker">
