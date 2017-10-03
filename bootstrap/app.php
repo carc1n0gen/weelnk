@@ -1,19 +1,24 @@
 <?php
 
+use App\CookieHelper;
+use Slim\Views\PhpRenderer;
+use Psr\Log\LoggerInterface;
+use Doctrine\DBAL\Connection;
+use League\Flysystem\Filesystem;
+use App\Handlers\LinkFetchHandler;
+use Carc1n0gen\ShortLink\Converter;
+use App\Handlers\LinkShortenHandler;
+use Psr\Http\Message\ResponseInterface;
+use Cache\Adapter\Common\AbstractCachePool;
+use Psr\Http\Message\ServerRequestInterface;
+
 /*
 |--------------------------------------------------------------------------
 | Initialize the slim app
 |--------------------------------------------------------------------------
 */
 
-$config = [
-    'settings' => [
-        'displayErrorDetails' => getenv('APP_DEBUG') ?: false,
-        'database' => require __DIR__.'/../config/database.php',
-    ],
-];
-
-$app = new Slim\App($config);
+$app = new DI\Bridge\Slim\App();
 
 /*
 |--------------------------------------------------------------------------
@@ -23,76 +28,87 @@ $app = new Slim\App($config);
 
 $container = $app->getContainer();
 
-$container['request'] = function ($c) {
-    return App\Request::createFromEnvironment($c->get('environment'));
-};
+$container->set('settings.displayErrorDetails', getenv('APP_DEBUG') ?: false);
 
-$container['response'] = function ($c) {
+$container->set('request', function ($c) {
+    return App\Request::createFromEnvironment($c->get('environment'));
+});
+
+$container->set('response', function ($c) {
     $headers = new Slim\Http\Headers(['Content-Type' => 'text/html; charset=UTF-8']);
     $response = new App\Response(200, $headers);
     return $response->withProtocolVersion($c->get('settings')['httpVersion']);
-};
+});
 
-$container['errorHandler'] = function ($c) {
-    return new App\Handlers\ErrorHandler($c);
-};
-
-$container['db'] = function ($c) {
-    $config = $c->get('settings')['database'];
-    $dbType = getenv('DB_TYPE') ?: 'mysql';
-
-    $capsule = new Illuminate\Database\Capsule\Manager();
-    $capsule->addConnection($config[$dbType]);
-    $capsule->setAsGlobal();
-    
-    return $capsule;
-};
-
-$container['view'] = function ($c) {
-    return new \Slim\Views\PhpRenderer(__DIR__.'/../app/views/');
-};
-
-$container['redis'] = function ($c) {
-    return new Illuminate\Redis\RedisManager(
-        'predis',
-        [
-            'default' => [
-                'scheme' => 'tcp',
-                'host' => getenv('REDIS_HOST') ?: '127.0.0.1',
-                'port' => getenv('REDIS_PORT') ?: 6379,
-            ],
-            'options' => [
-                'parameters' => [
-                    'password' => getenv('REDIS_PASSWORD') ?: null,
-                ],
-            ],
-        ]
+$container->set('errorHandler', function ($c) {
+    return new App\Handlers\ErrorHandler(
+        $c->get(PhpRenderer::class),
+        $c->get(LoggerInterface::class),
+        $c->get(CookieHelper::class)
     );
-};
+});
 
-$container['cache'] = function ($c) {
+$container->set(PhpRenderer::class, function ($c) {
+    return new \Slim\Views\PhpRenderer(__DIR__.'/../app/views/');
+});
+
+$container->set(Connection::class, function ($c) {
+    $type = getenv('DB_TYPE') ?: 'mysql';
+    $username = getenv('DB_USERNAME') ?: 'root';
+    $password = getenv('DB_PASSWORD') ?: 'root';
+    $host = getenv('DB_HOST') ?: '127.0.0.1';
+    $database = $type === 'sqlite'
+        ? getenv('DB_DATABASE') ?: __DIR__.'/../storage/database/weelnk.sqlite'
+        : getenv('DB_DATABASE') ?: 'weelnk';
+
+    $config = new \Doctrine\DBAL\Configuration();
+    $connectionParams = [
+        'url' => "$type://$username:$password@$host/$database"
+    ];
+    return \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+});
+
+$container->set(Filesystem::class, function ($c) {
+    $adapter = new League\Flysystem\Adapter\Local(__DIR__.'/../storage');
+    return new League\Flysystem\Filesystem($adapter);
+});
+
+$container->set(AbstractCachePool::class, function ($c) {
     $driver = getenv('CACHE_DRIVER') ?: 'file';
-    switch ($driver) {
+    switch($driver) {
         case 'array':
-            $cache = new Illuminate\Cache\ArrayStore();
+            $pool = new Cache\Adapter\PHPArray\ArrayCachePool();
             break;
 
         case 'file':
-            $cache = new Illuminate\Cache\FileStore($c->get('fileSystem'), __DIR__.'/../storage/cache/links');
+            $pool = new Cache\Adapter\Filesystem\FilesystemCachePool($c->get(Filesystem::class));
+            $pool->setFolder('cache');
             break;
 
         case 'redis':
-            $cache = new Illuminate\Cache\RedisStore($c->get('redis'), 'weelnk');
+            $host = getenv('REDIS_HOST') ?: '127.0.0.1';
+            $port = getenv('REDIS_PORT') ?: 6379;
+            $client = new \Predis\Client("tcp:/$host:$port");
+            $pool = new \Cache\Adapter\Predis\PredisCachePool($client);
+            break;
+
+        case 'memcached':
+            $host = getenv('MEMCACHED_HOST') ?: '127.0.0.1';
+            $port = getenv('MEMCACHED_PORT') ?: 11211;
+            $client = new \Memcached();
+            $client->addServer($host, $port);
+            $pool = new \Cache\Adapter\Memcached\MemcachedCachePool($client);
             break;
 
         default:
             throw new \Exception("Unsupported cache driver \"$driver\"");
     }
 
-    return new Illuminate\Cache\Repository($cache);
-};
+    return $pool;
+});
 
-$container['logger'] = function ($c) {
+$container->set(LoggerInterface::class, function ($c) {
+    // TODO: add syslog options
     $logger = new Monolog\Logger('weelnk');
     $file_handler = new Monolog\Handler\StreamHandler(
         __DIR__.'/../storage/logs/weelnk.log',
@@ -100,15 +116,23 @@ $container['logger'] = function ($c) {
     );
     $logger->pushHandler($file_handler);
     return $logger;
-};
+});
 
-$container['shortlink'] = function ($c) {
-    return new Carc1n0gen\ShortLink\Converter('abcdefghijklmnopqrswpwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
-};
+$container->set(Converter::class, function ($c) {
+    return new Carc1n0gen\ShortLink\Converter(
+        'abcdefghijklmnopqrswpwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+    );
+});
 
-$container['fileSystem'] = function ($c) {
-    return new Illuminate\Filesystem\Filesystem();
-};
+$container->set(CookieHelper::class, function ($c) {
+    return new CookieHelper();
+});
+
+/*
+|--------------------------------------------------------------------------
+| Middlewares
+|--------------------------------------------------------------------------
+*/
 
 $app->add(App\Middleware\RequestLogger::class);
 
@@ -118,12 +142,13 @@ $app->add(App\Middleware\RequestLogger::class);
 |--------------------------------------------------------------------------
 */
 
-$app->get('/', function ($request, $response) {
-    return $this->view->render($response, 'form.php');
+$app->get('/', function (ServerRequestInterface $request, ResponseInterface $response, PhpRenderer $view, CookieHelper $cookies) {
+    $theme = $cookies->get($request, 'theme') ?: 'light';
+    return $view->render($response, 'form.php', ['theme' => $theme]);
 });
 
-$app->get('/{shortLink}', App\Handlers\LinkFetchHandler::class);
+$app->post('/', LinkShortenHandler::class);
 
-$app->post('/', App\Handlers\LinkShortenHandler::class);
+$app->get('/{shortLink}', LinkFetchHandler::class);
 
 return $app;

@@ -1,24 +1,26 @@
 
 
-Code Coverage Report:     
-  2017-03-23 20:50:31     
-                          
- Summary:                 
-  Classes: 100.00% (7/7)  
-  Methods: 100.00% (12/12)
-  Lines:   100.00% (65/65)
+Code Coverage Report:       
+  2017-09-29 11:44:38       
+                            
+ Summary:                   
+  Classes: 100.00% (8/8)    
+  Methods: 100.00% (19/19)  
+  Lines:   100.00% (125/125)
 
-\App::Component
-  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  3/  3)
+\App::CookieHelper
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  2/  2)
 \App::Request
   Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  8/  8)
 \App::Response
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
 \App\Handlers::ErrorHandler
-  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 16/ 16)
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 27/ 27)
 \App\Handlers::LinkFetchHandler
-  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 13/ 13)
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 15/ 15)
 \App\Handlers::LinkShortenHandler
-  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 18/ 18)
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 18/ 18)
 \App\Middleware::RequestLogger
-  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  6/  6)
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  8/  8)
+\App\Stores::LinkStore
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 45/ 45)

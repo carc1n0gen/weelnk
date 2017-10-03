@@ -2,33 +2,53 @@
 
 namespace App\Handlers;
 
-use DateTime;
-use Exception;
-use App\Component;
+use App\Request;
+use App\Response;
+use App\CookieHelper;
+use App\Stores\LinkStore;
+use Slim\Views\PhpRenderer;
 
 /**
  * Fech the url for a given shortlink
  */
-class LinkFetchHandler extends Component
+class LinkFetchHandler
 {
-    public function __invoke($request, $response, $args)
-    {
-        if ($this->cache->has($args['shortLink'])) {
-            $url = $this->cache->get($args['shortLink']);
-            $data = ['code' => 'ok', 'url' => $url];
-            $response = $request->isJson() ? $response->withJson($data) : $response->redirect($url);
-        } else {
-            $id = $this->shortlink->decode($args['shortLink']);
-            $link = $this->db->table('links')->find($id);
+    /**
+     * @var LinkStore
+     */
+    protected $linkStore;
 
-            if ($link) {
-                $this->cache->put($args['shortLink'], $link->url, (new DateTime('+24 hours'))->getTimeStamp());
-                $data = ['code' => 'ok', 'url' => $link->url];
-                $response = $request->isJson() ? $response->withJson($data) : $response->redirect($link->url);
-            } else {
-                $data = ['code' => 'notFound','msg' => 'No link found'];
-                $response = $request->isJson() ? $response->withJson($data, 404) : $this->view->render($response, 'form.php', $data)->withStatus(404);
+    /**
+     * @var PhpRenderer
+     */
+    protected $view;
+
+    /**
+     * @var CookieHelper
+     */
+    protected $cookies;
+
+    public function __construct(LinkStore $linkStore, PhpRenderer $view, CookieHelper $cookies)
+    {
+        $this->linkStore = $linkStore;
+        $this->view = $view;
+        $this->cookies = $cookies;
+    }
+
+    public function __invoke(Request $request, Response $response, $shortLink)
+    {
+        $url = $this->linkStore->find($shortLink);
+        if ($url) {
+            $data = ['code' => 'ok', 'url' => $url];
+            $response = $request->isJson() ? $response->withJson($data)
+                : $response->redirect($url);
+        } else {
+            $data = ['code' => 'notFound', 'msg' => 'No link found'];
+            if (!$request->isJson()) {
+                $data['theme'] = $this->cookies->get($request, 'theme') ?: 'light';
             }
+            $response = $request->isJson() ? $response->withJson($data, 404)
+                : $this->view->render($response, 'form.php', $data)->withStatus(404);
         }
 
         return $response;

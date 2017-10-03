@@ -22,7 +22,7 @@ class ShortenALinkTest extends TestCase
             'SERVER_NAME' => 'test.com',
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
         ]);
-        $this->app->getContainer()['environment'] = $env;
+        $this->app->getContainer()->set('environment', $env);
 
         $response = $this->app->run(true);
         $this->assertEquals($response->getStatusCode(), 400);
@@ -46,7 +46,7 @@ class ShortenALinkTest extends TestCase
             'SERVER_NAME' => 'test.com',
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
         ]);
-        $this->app->getContainer()['environment'] = $env;
+        $this->app->getContainer()->set('environment', $env);
 
         foreach($badUrls as $badUrl) {
             $_POST['url'] = $badUrl;
@@ -65,7 +65,7 @@ class ShortenALinkTest extends TestCase
             'SERVER_NAME' => 'test.com',
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
         ]);
-        $this->app->getContainer()['environment'] = $env;
+        $this->app->getContainer()->set('environment', $env);
 
         $response = $this->app->run(true);
         $this->assertEquals(200, $response->getStatusCode());

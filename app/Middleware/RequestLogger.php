@@ -2,15 +2,23 @@
 
 namespace App\Middleware;
 
-use App\Component;
-use Interop\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * This middleware logs request information for each request
  */
-class RequestLogger extends Component
+class RequestLogger
 {
-    public function __invoke($request, $response, $next)
+    protected $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         $this->logger->addInfo('Incoming request', [
             'ip' => $request->getRemoteAddress(),

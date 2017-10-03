@@ -1,6 +1,6 @@
 <?php
 
-$app = require __DIR__.'/../bootstrap/autoload.php';
+require __DIR__.'/../bootstrap/autoload.php';
 
 try {
     // Attempt to load .env and do nothing if it fails

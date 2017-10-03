@@ -6,7 +6,10 @@ use Slim\Http\Uri;
 use Slim\Http\Body;
 use Tests\TestCase;
 use App\Request;
+use App\CookieHelper;
 use Slim\Http\Headers;
+use App\Stores\LinkStore;
+use Slim\Views\PhpRenderer;
 use App\Errors\ValidationException;
 use App\Handlers\LinkShortenHandler;
 
@@ -18,7 +21,11 @@ class LinkShortenHandlerTest extends TestCase
     public function setUp()
     {
         $this->app = $this->createApplication();
-        $this->controller = new LinkShortenHandler($this->app->getContainer());
+        $this->controller = new LinkShortenHandler(
+            $this->app->getContainer()->get(LinkStore::class),
+            $this->app->getContainer()->get(PhpRenderer::class),
+            $this->app->getContainer()->get(CookieHelper::class)
+        );
     }
 
     public function testShouldThrowValidationExceptionWithKnowParameter()
