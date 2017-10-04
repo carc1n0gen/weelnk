@@ -15,6 +15,8 @@ class Version20170918234002_create_links_table extends AbstractMigration
      */
     public function up(Schema $schema)
     {
+        $this->skipIf($schema->hasTable('links'));
+
         $table = $schema->createTable('links');
         $table->addColumn('id', 'integer', [
             'unsigned' => true,
