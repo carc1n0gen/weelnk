@@ -5,6 +5,14 @@
 <title>weelnk</title>
 
 <style>
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: normal;
+	font-weight: 300;
+	src: local('Source Sans Pro Light'), local('SourceSansPro-Light'), url(../font/SourceSansPro-Light-latin.woff2) format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+20$
+}
+
 * {
 	box-sizing: border-box;
 }
@@ -12,7 +20,7 @@
 body {
 	padding-top: 4em;
 	color: #93A1A1;
-	font-family: Arial,Helvetica,sans-serif;
+	font-family: "Source Sans Pro", Helvetica, sans-serif;
 	transition: background-color 500ms linear;
 }
 
