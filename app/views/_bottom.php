@@ -2,6 +2,9 @@
 
 <footer>
     <p>&copy; <a href="https://carsonevans.ca">Carson Evans</a> <?= date('Y') ?></p>
+	<?php if (getenv('SHOW_DO_PLUG') == 'true'): ?>
+	<p>Proudly hosted on <a href="https://m.do.co/c/1c194cde1063">DigitalOcean</a></p>
+	<?php endif ?>
 </footer>
 
 <div class="theme-picker">
