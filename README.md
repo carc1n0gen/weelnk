@@ -53,6 +53,8 @@ If you're living on the edge and use the master branch, you can just regularly d
 
 If you've gone the safer route and checked out a tagged release, then it's probably a good idea to regularly check the [releases page](https://github.com/carc1n0gen/weelnk/releases). You can also subscribe to that page as an rss feed, as it's url doubles as a feed.  Each release will contain the release notes and other information like if migrations are required.
 
+Once you've gone to the release page and there is a new release, upgrade with the command `git fetch && git checkout v[version-number]`.  Then run `vendor/bin/doctrine-migrations migrations:migrate` in the case that the release notes mention migrations are needed.
+
 ## License
 
 Weelnk is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
