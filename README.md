@@ -7,7 +7,7 @@
 The `master` branch *should* always be stable, but it is recommended to checkout the latest tagged release.  Check out 
 the [release page](https://github.com/carc1n0gen/weelnk/releases) for the latest updates, and upgrade/migrations guides.
 
-`git checkout v2.0.2`
+`git checkout v2.1.0`
 
 Then install the dependencies
 
@@ -49,21 +49,25 @@ The `storage` directory will need write permissions for the web server.
 
 ## Upgrading
 
-### The Safe Way
-
 Take a look at the [releases page](https://github.com/carc1n0gen/weelnk/releases) to see the latest releases. You can also subscribe to that page as an rss feed, as it's url doubles as a feed.  Each release will contain the release notes and other information like if migrations are required.
 
-When you see you are behind, you can upgrade with the following commands:
+### v2.1.0 And Above
 
-`git fetch --tags && git checkout v[version-number]` - This will fetch the updates and then switch to the version number you specified.  **Make sure you replace [version-number] with the version number you want to upgrade to**
+We now have an upgrade script that will take care of everything.
+
+`php upgrade.php [version number]`
+
+This command will fetch the latest changes, checkout the version specified, and run migrations.
+
+**Make sure you include the `v` in the version number.**
+
+### The Old way
+
+`git fetch --tags && git checkout [version-number]` - This will fetch the updates and then switch to the version number you specified.  **Make sure you replace [version-number] with the version number you want to upgrade to, including the letter `v`**
 
 `composer install` - To install new dependencies in case there were any
 
 `vendor/bin/doctrine-migrations migrations:migrate` - Runs database migrations in case any are needed.  This is safe to run regardless of if there are migrations or not.
-
-### The Less Safe Way
-
-If you're living on the edge and use the master branch, you can just regularly do a `git pull origin master` to fetch the latest updates, `composer install` to update dependencies, and finally `vendor/bin/doctrine-migrations migrations:migrate` in case there were any migrations to be run since you last updated.
 
 ## License
 
