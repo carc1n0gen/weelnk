@@ -1,12 +1,12 @@
 
 
-Code Coverage Report:       
-  2017-09-29 11:44:38       
-                            
- Summary:                   
-  Classes: 100.00% (8/8)    
-  Methods: 100.00% (19/19)  
-  Lines:   100.00% (125/125)
+Code Coverage Report:      
+  2017-12-01 15:16:13      
+                           
+ Summary:                  
+  Classes: 100.00% (8/8)   
+  Methods: 100.00% (19/19) 
+  Lines:   98.46% (128/130)
 
 \App::CookieHelper
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  2/  2)
