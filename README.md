@@ -15,7 +15,7 @@ A small self hostable link shortening service writting in PHP with the Slim micr
 The `master` branch *should* always be stable, but it is recommended to checkout the latest tagged release.  Check out 
 the [release page](https://github.com/carc1n0gen/weelnk/releases) for the latest updates, and upgrade/migrations guides.
 
-`git checkout v2.1.0`
+`git checkout v2.2.0`
 
 Then install the dependencies
 
