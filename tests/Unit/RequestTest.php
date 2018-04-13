@@ -11,13 +11,6 @@ use Slim\Http\Environment;
 
 class RequestTest extends TestCase
 {
-    protected static $app;
-
-    public static function setUpBeforeClass()
-    {
-        self::$app = self::createApplication();
-    }
-
     public function testGetSchemeAndHttpHost()
     {
         $body = 'url=https%3A%2F%2Fgoogle.ca';

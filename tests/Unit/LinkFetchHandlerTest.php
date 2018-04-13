@@ -17,7 +17,7 @@ class LinkFetchHandlerTest extends TestCase
 
     public function setUp()
     {
-        $this->app = self::createApplication();
+        $this->app = $this->createApplication();
         $this->controller = new LinkFetchHandler(
             $this->app->getContainer()->get(LinkStore::class),
             $this->app->getContainer()->get(PhpRenderer::class),
