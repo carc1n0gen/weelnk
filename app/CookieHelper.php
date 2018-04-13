@@ -17,7 +17,7 @@ class CookieHelper
      * @param $key The name of the cookie
      * @return string The value of the cookie
      */
-    public function get(ServerRequestInterface $request)
+    public function get(ServerRequestInterface $request, $key)
     {
         $cookies = $request->getCookieParams('cookies');
         return isset($cookies[$key]) ? $cookies[$key] : null;
