@@ -4,7 +4,7 @@ namespace Tests;
 
 trait CreatesApplication
 {
-    public static function createApplication()
+    public function createApplication()
     {
         $app = require __DIR__.'/../bootstrap/app.php';
         return $app;

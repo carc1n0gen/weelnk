@@ -11,7 +11,7 @@ class ShortenALinkTest extends TestCase
 
     public function setUp()
     {
-        $this->app = self::createApplication();
+        $this->app = $this->createApplication();
     }
 
     public function testThatItFailsWithNoUrl()

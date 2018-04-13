@@ -13,24 +13,24 @@ use Carc1n0gen\ShortLink\Errors\DecodingException;
 
 class ErrorHandlerTest extends TestCase
 {
-    protected static $app;
-    protected static $container;
+    protected $app;
+    protected $container;
 
-    public static function setUpBeforeClass()
+    public function setUp()
     {
-        self::$app = self::createApplication();
-        self::$container = self::$app->getContainer();
+        $this->app = $this->createApplication();
+        $this->container = $this->app->getContainer();
     }
 
     public function testShouldRespondBadRequest()
     {
-        $req = self::$container->get('request');
-        $res = self::$container->get('response');
+        $req = $this->container->get('request');
+        $res = $this->container->get('response');
         $exception = new ValidationException('You dun goofed');
         $handler = new ErrorHandler(
-            self::$container->get(PhPRenderer::class),
-            self::$container->get(LoggerInterface::class),
-            self::$container->get(CookieHelper::class)
+            $this->container->get(PhPRenderer::class),
+            $this->container->get(LoggerInterface::class),
+            $this->container->get(CookieHelper::class)
         );
 
         $response = $handler($req, $res, $exception);
@@ -39,13 +39,13 @@ class ErrorHandlerTest extends TestCase
 
     public function testShouldRespondNotFound()
     {
-        $req = self::$container->get('request');
-        $res = self::$container->get('response');
+        $req = $this->container->get('request');
+        $res = $this->container->get('response');
         $exception = new DecodingException('Where did the it go?');
         $handler = new ErrorHandler(
-            self::$container->get(PhPRenderer::class),
-            self::$container->get(LoggerInterface::class),
-            self::$container->get(CookieHelper::class)
+            $this->container->get(PhPRenderer::class),
+            $this->container->get(LoggerInterface::class),
+            $this->container->get(CookieHelper::class)
         );
 
         $response = $handler($req, $res, $exception);
@@ -54,13 +54,13 @@ class ErrorHandlerTest extends TestCase
 
     public function testShouldRespondUnknownError()
     {
-        $req = self::$container->get('request');
-        $res = self::$container->get('response');
+        $req = $this->container->get('request');
+        $res = $this->container->get('response');
         $exception = new Exception('Sort of shit the fan didn\'t ya');
         $handler = new ErrorHandler(
-            self::$container->get(PhPRenderer::class),
-            self::$container->get(LoggerInterface::class),
-            self::$container->get(CookieHelper::class)
+            $this->container->get(PhPRenderer::class),
+            $this->container->get(LoggerInterface::class),
+            $this->container->get(CookieHelper::class)
         );
 
         $response = $handler($req, $res, $exception);

@@ -1,3 +1,11 @@
+# Weelnk
+
+[![Build Status](https://travis-ci.org/carc1n0gen/weelnk.svg?branch=master)](https://travis-ci.org/carc1n0gen/weelnk)
+[![Coverage Status](https://coveralls.io/repos/github/carc1n0gen/weelnk/badge.svg?branch=master)](https://coveralls.io/github/carc1n0gen/weelnk?branch=master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A small self hostable link shortening service writting in PHP with the Slim micro framework
+
 ![Screenshot](https://i.imgur.com/VxXhcqv.png)
 
 ## Install

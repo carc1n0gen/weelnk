@@ -11,7 +11,7 @@ class UnshortenALinkTest extends TestCase
 
     public function setUp()
     {
-        $this->app = self::createApplication();
+        $this->app = $this->createApplication();
     }
     
     public function testThatIt404sWhenLinkDoesNotExist()
@@ -64,7 +64,7 @@ class UnshortenALinkTest extends TestCase
         $link = $dom->getElementById('short-link');
         $url = parse_url($link->textContent);
 
-        $this->app = self::createApplication(); // re-init the app
+        $this->app = $this->createApplication(); // re-init the app
         $env = Environment::mock([
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => $url['path'],

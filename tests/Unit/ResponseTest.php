@@ -11,16 +11,16 @@ use Slim\Http\Environment;
 
 class ResponseTest extends TestCase
 {
-    protected static $app;
+    protected $app;
 
-    public static function setUpBeforeClass()
+    public function setUp()
     {
-        self::$app = self::createApplication();
+        $this->app = $this->createApplication();
     }
 
     public function testGetSchemeAndHttpHost()
     {
-        $response = self::$app->getContainer()->get('response');
+        $response = $this->app->getContainer()->get('response');
         $response = $response->redirect('https://google.ca');
         $headers = $response->getHeaders();
 
