@@ -10,7 +10,7 @@ A small self hostable link shortening service writting in PHP with the Slim micr
 
 ## Install
 
-`composer create-project carc1n0gen/weelnk path/to/install && cd path/to/install`
+`git clone https://github.com/carc1n0gen/weelnk.git path/to/install && cd path/to/install`
 
 The `master` branch *should* always be stable, but it is recommended to checkout the latest tagged release.  Check out 
 the [release page](https://github.com/carc1n0gen/weelnk/releases) for the latest updates, and upgrade/migrations guides.
