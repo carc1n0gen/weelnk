@@ -15,4 +15,4 @@ after_script: vendor/bin/php-coveralls --coverage_clover=clover.xml -v
 
 notifications:
   email:
-on_success: never
+    on_success: never
