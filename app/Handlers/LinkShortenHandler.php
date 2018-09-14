@@ -14,7 +14,7 @@ use App\Errors\ValidationException;
  */
 class LinkShortenHandler
 {
-    const PATTERN = '((https?:\/\/)?(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})';
+    const PATTERN = '/^((https?:\/\/)?(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/';
 
     protected $linkStore;
     protected $view;
